@@ -45,22 +45,48 @@ Key goals:
 
 ----
 
-Data Source
-The pipeline uses the public Wikipedia Event Stream API.
-Stream endpoint:
-https://stream.wikimedia.org/v2/stream/recentchange
+###  Data Source
 
-This stream publishes live Wikipedia edit events, including:
-- Page edits
-- New page creations
-- User edits
-- Bot edits
-- Timestamps
-- Page titles
+**Wikipedia Recent Changes Stream:**  
+`https://stream.wikimedia.org/v2/stream/recentchange`
 
-----
+Event fields:
 
-##### Technology Stack
+- `title` – Page title  
+- `user` – Editor username  
+- `wiki` – Language  
+- `timestamp` – Edit time  
+- `bot` – Bot indicator  
+- `comment` – Edit comment  
+
+---
+
+###  Medallion Architecture
+
+### Bronze Layer
+- Stores **raw streaming data**  
+- Preserves original JSON payload for debugging  
+- Example table: `bronze_wikipedia_events`  
+- Notebook: `src/notebooks/bronze_ingestion/`
+
+### Silver Layer
+- Cleans & structures data  
+- Filters valid edits, normalizes usernames, timestamps, bot flags  
+- Example table: `silver_wikipedia_edits`  
+- Pipeline: `src/DTLpinline/silver_transformation_dtl_pipeline/`
+
+### Gold Layer
+- Analytics-ready tables for dashboards  
+- Example metrics:  
+  - Top edited pages  
+  - Edits per language  
+  - Bot vs human edits  
+- Notebook: `src/gold/gold_analytics_notebook/`
+
+---
+
+
+### Technology Stack
 
 
 | Tool                       | Purpose                        |
@@ -104,6 +130,77 @@ real-time-wikipedia-streaming-pipeline
 
 ----
 
+
+###  Prerequisites
+
+- Databricks workspace  
+- Python 3.x / PySpark  
+- Databricks cluster with **Delta Live Tables** enabled  
+- Required Python libraries: `sseclient`, `requests`, `pyspark`  
+- Access to GitHub for repository clone  
+
+---
+
+###  How to Run the Project
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/data-engineer-yogesh/real-time-wikipedia-streaming-pipeline.git
+```
+
+2. **Upload notebooks and pipelines to Databricks workspace.**
+
+3. **Install required libraries on the cluster:**
+```
+%pip install sseclient requests
+```
+4. **Run the Bronze notebook to start streaming ingestion.**
+
+5. **Deploy DLT pipeline for Silver and Gold transformations.**
+
+6. **Open Databricks SQL dashboard to visualize analytics.**
+
+
+#### Example Analytics Queries
+
+Most edited pages:
+
+```
+SELECT title, COUNT(*) AS edits
+FROM silver_wikipedia_edits
+GROUP BY title
+ORDER BY edits DESC;
+```
+Edits per language:
+```
+SELECT wiki, COUNT(*) AS edits
+FROM silver_wikipedia_edits
+GROUP BY wiki;
+```
+Bot vs Human edits:
+```
+SELECT bot, COUNT(*) AS edits
+FROM silver_wikipedia_edits
+GROUP BY bot;
+```
+
+----
+
+### Learning Outcomes
+This project demonstrates:
+
+- Real-time streaming ingestion
+- Delta Lake & Delta Live Tables pipeline design
+- Medallion architecture implementation
+- Data transformation best practices
+- Analytics-ready dataset creation
+- Dashboarding on Databricks
+
+It serves as a portfolio project for data engineering interviews and Databricks certification preparation.
+
+----
+
 #### Future Improvements
 
 Potential enhancements:
@@ -112,6 +209,7 @@ Potential enhancements:
 - Add alerting on edit spikes
 - Build advanced analytics models
 - Integrate with BI tools
+
 
 ---
 
