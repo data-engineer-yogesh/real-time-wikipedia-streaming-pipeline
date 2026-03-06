@@ -1,0 +1,364 @@
+{
+  "datasets": [
+    {
+      "name": "1a113561",
+      "displayName": "Chart_1_Real_Time_Edits_(Line Chart)",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM real_time_wikipedia_streaming_pipeline.gold.edits_over_time\n",
+        "ORDER BY edit_minute"
+      ],
+      "catalog": "real_time_wikipedia_streaming_pipeline",
+      "schema": "gold"
+    },
+    {
+      "name": "b9b663b8",
+      "displayName": "Chart_2_Wiki_Activity_(Bar Chart)",
+      "queryLines": [
+        "\n",
+        "SELECT *\n",
+        "FROM wiki_edit_counts\n",
+        "ORDER BY total_edits DESC"
+      ],
+      "catalog": "real_time_wikipedia_streaming_pipeline",
+      "schema": "gold"
+    },
+    {
+      "name": "5ac9c73f",
+      "displayName": "Chart_3_Top_Users_(Bar Chart)",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM top_users"
+      ],
+      "catalog": "real_time_wikipedia_streaming_pipeline",
+      "schema": "gold"
+    },
+    {
+      "name": "33ad0af6",
+      "displayName": "Chart_4_Top_Pages_(Table)",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM top_pages"
+      ],
+      "catalog": "real_time_wikipedia_streaming_pipeline",
+      "schema": "gold"
+    }
+  ],
+  "pages": [
+    {
+      "name": "b68363f6",
+      "displayName": "Real-Time Wikipedia Streaming Analytics",
+      "layout": [
+        {
+          "widget": {
+            "name": "chart-1-real-time-edits-line-chart",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "1a113561",
+                  "fields": [
+                    {
+                      "name": "monthly(edit_minute)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `edit_minute`)"
+                    },
+                    {
+                      "name": "sum(edits)",
+                      "expression": "SUM(`edits`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Chart 1 — Real-Time Edits (Line Chart)\n"
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(edit_minute)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(edits)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "chart-3-top-users-bar-chart",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "b9b663b8",
+                  "fields": [
+                    {
+                      "name": "bot_edits",
+                      "expression": "`bot_edits`"
+                    },
+                    {
+                      "name": "human_edits",
+                      "expression": "`human_edits`"
+                    },
+                    {
+                      "name": "wiki",
+                      "expression": "`wiki`"
+                    },
+                    {
+                      "name": "sum(total_edits)",
+                      "expression": "SUM(`total_edits`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Chart 3 — Top Users (Bar Chart)\n",
+                "showTitle": true,
+                "showDescription": true,
+                "description": "Human vs Bot Edits (Stacked)"
+              },
+              "mark": {
+                "layout": "stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "wiki",
+                  "displayName": "Wiki",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_edits)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "bot_edits",
+                  "legend": {
+                    "position": "right"
+                  },
+                  "displayName": "Edit Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "label": {
+                  "show": true
+                },
+                "extra": [
+                  {
+                    "fieldName": "bot_edits",
+                    "displayName": "Bot Edits"
+                  },
+                  {
+                    "fieldName": "human_edits",
+                    "displayName": "Human Edits"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "chart-2-wiki-activity-bar-chart",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "5ac9c73f",
+                  "fields": [
+                    {
+                      "name": "bin(total_edits, binWidth=0_2)",
+                      "expression": "BIN_FLOOR(`total_edits`, 0.2)"
+                    },
+                    {
+                      "name": "countdistinct(user)",
+                      "expression": "COUNT(DISTINCT `user`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "mark": {
+                "colors": [
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 2
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 3
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 4
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 5
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 6
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 7
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 8
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 9
+                  },
+                  {
+                    "themeColorType": "visualizationColors",
+                    "position": 10
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Chart 2 — Wiki Activity (Bar Chart)"
+              },
+              "widgetType": "histogram",
+              "encodings": {
+                "x": {
+                  "fieldName": "bin(total_edits, binWidth=0_2)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "countdistinct(user)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "chart-4-top-pages-table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "33ad0af6",
+                  "fields": [
+                    {
+                      "name": "title",
+                      "expression": "`title`"
+                    },
+                    {
+                      "name": "edit_count",
+                      "expression": "`edit_count`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": "Chart 4 — Top Pages (Table)"
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "title"
+                  },
+                  {
+                    "fieldName": "edit_count"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 12,
+            "height": 7
+          }
+        },
+        {
+          "widget": {
+            "name": "03d160e1",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size: 36px;line-height: 1.5;\">                      Real-Time Wikipedia Streaming Analytics</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
