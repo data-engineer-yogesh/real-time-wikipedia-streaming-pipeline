@@ -10,6 +10,33 @@ This project demonstrates modern data engineering practices used in production e
 
 ----
 
+```
+real-time-wikipedia-streaming-pipeline
+│
+├── src
+│
+│   ├── notebooks
+│   │
+│   │   └── bronze_ingestion
+│   │       └── wikipedia_stream_ingestion_notebook
+│
+│   ├── DTLpinline
+│   │
+│   │   └── silver_transformation_dtl_pipeline
+│
+│   ├── gold
+│   │
+│   │   └── gold_analytics_notebook
+│
+│   └── dashboard
+│       └── wikipedia_dashboard.json
+│
+├── architecture.png
+│
+└── README.md
+```
+
+----
 #### Pipeline Flow
 ```
 
@@ -102,33 +129,6 @@ Event fields:
 
 ----
 
-```
-real-time-wikipedia-streaming-pipeline
-│
-├── src
-│
-│   ├── notebooks
-│   │
-│   │   └── bronze_ingestion
-│   │       └── wikipedia_stream_ingestion_notebook
-│
-│   ├── DTLpinline
-│   │
-│   │   └── silver_transformation_dtl_pipeline
-│
-│   ├── gold
-│   │
-│   │   └── gold_analytics_notebook
-│
-│   └── dashboard
-│       └── wikipedia_dashboard.json
-│
-├── architecture.png
-│
-└── README.md
-```
-
-----
 
 
 ###  Prerequisites
